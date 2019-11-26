@@ -5,6 +5,8 @@ import os
 import json, csv, collections
 import argparse
 import pandas as pd
+## Some code was taken from https://github.com/TianyangZhan/OverwatchLeaguePredictor/blob/master/owl.py 
+## as we needed a way to parse the json file retrieved by the api into a csv file 
 
 class OwlData:
 
@@ -57,6 +59,28 @@ class OwlData:
             teams.append(temp)
         self.table = teams
 
+    def playerstats_todict(self):
+        players=[]
+        url = urllib.request.urlopen("https://api.overwatchleague.com/stats/players?stage_id=regular_season")
+        data = json.loads(url.read().decode())
+        for i in range(len(data["data"])):
+            temp = {}
+            temp["playerId"] = data["data"][i]["playerId"]
+            temp["teamId"] = data["data"][i]["teamId"]
+            temp["role"] = data["data"][i]["role"]
+            temp["name"] = data["data"][i]["name"]
+            temp["team"] = data["data"][i]["team"]
+            temp["teamId"] = data["data"][i]["eliminations_avg_per_10m"]
+            temp["deaths_avg_per_10m"]= data["data"][i]["deaths_avg_per_10m"]
+            temp["healing_avg_per_10m"] = data["data"][i]["healing_avg_per_10m"]
+            temp["ultimates_earned_avg_per_10m"]= data["data"][i]["ultimates_earned_avg_per_10m"]
+            temp["hero_damage_avg_per_10m"]= data["data"][i]["hero_damage_avg_per_10m"]
+            temp["final_blows_avg_per_10m"]= data["data"][i]["final_blows_avg_per_10m"]
+            temp["time_played_total"]= data["data"][i]["time_played_total"]
+
+            players.append(temp)
+        self.playerstable = players
+
 
     def get_teamdata(self):
         url = urllib.request.urlopen("https://api.overwatchleague.com/v2/standings?locale=en_US")
@@ -84,8 +108,7 @@ class OwlData:
             if data["data"][i]["eliminations_avg_per_10m"]:
                 hashmap[data["data"][i]["teamId"]][data["data"][i]["role"]][4] += 1
         self.playerdata = hashmap
-
-
+            
     def get_schedule(self,curr_stage = -1, curr_week = -1):
 
         url = urllib.request.urlopen("https://api.overwatchleague.com/schedule")
@@ -127,6 +150,16 @@ class OwlData:
         except IOError:
             print("I/O error")
 
+    def playerstats_save_to_file(self,fileName):
+        colname = self.playerstable[0].keys()
+        try:
+            with open(fileName, 'w') as output_file:
+                dict_writer = csv.DictWriter(output_file, fieldnames=colname)
+                dict_writer.writeheader()
+                dict_writer.writerows(self.playerstable)
+        except IOError:
+            print("I/O error")
+
     def read_from_file(self,fileName):
         with open(fileName) as f:
             content = [{k: v for k, v in row.items()}
@@ -152,14 +185,19 @@ def main():
 #     df_3.to_json('owl_rankings.json')
     owl = OwlData()
     file = "owl_data.csv"
-
+    file2 = "owl_playerstats.csv"
     owl.get_playerdata()
     owl.get_teamdata()
     owl.to_dict()
     owl.save_to_file(file)
 
+    owl.playerstats_todict()
+    owl.playerstats_save_to_file(file2)
+
     df = pd.read_csv('owl_data.csv')
+    df2 = pd.read_csv('owl_playerstats.csv')
     print(df)
+    print(df2)
 
 if __name__ == '__main__':
     main()
