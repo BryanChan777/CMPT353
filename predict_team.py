@@ -9,6 +9,7 @@ from sklearn.preprocessing import FunctionTransformer
 from sklearn.pipeline import make_pipeline
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.preprocessing import StandardScaler
+from sklearn.preprocessing import MinMaxScaler
 from sklearn.svm import SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.ensemble import VotingClassifier
@@ -27,7 +28,8 @@ def main():
     X1_train, X1_test, y1_train, y1_test = train_test_split(X_1, y_1)
 
     model = make_pipeline(
-    	StandardScaler(),
+    	#MinMaxScaler(),
+        StandardScaler(),
     	VotingClassifier([
             ('nb', GaussianNB()),
             ('knn', KNeighborsClassifier(9)),
@@ -60,9 +62,15 @@ def main():
     # monthly_unlabelled = pd.read_csv(sys.argv[2])
 
     X_2 = data.drop(columns=['team']).loc[:,'playerId':'time_played_total'].values
-    pd.Series(model.predict(X_2)).to_csv('owl_data.csv', index=False)
-    # print(model.predict(X_2))
-
+    # pd.Series(model.predict(X_2)).to_csv('owl_data.csv', index=False)
+    predicted = model.predict(X_2)
+    print(predicted)
+    
+    result = pd.read_csv('owl_playerstats.csv')
+    result['prediction'] = pd.DataFrame(predicted)
+    print(result['prediction'])
+    result.to_csv('team_predicted.csv', index=False)
+    
     print(OUTPUT_TEMPLATE.format(
             score = model.score(X1_test, y1_test) 
         )

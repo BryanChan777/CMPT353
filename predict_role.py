@@ -61,8 +61,14 @@ def main():
 
     X_2 = data.drop(columns=['role']).loc[:,'playerId':'time_played_total'].values
     # pd.Series(model.predict(X_2)).to_csv(sys.argv[3], index=False)
-    print(model.predict(X_2))
-
+    predicted = model.predict(X_2)
+    print(predicted)
+    
+    result = pd.read_csv('owl_playerstats.csv')
+    result['prediction'] = pd.DataFrame(predicted)
+    print(result['prediction'])
+    result.to_csv('roles_predicted.csv', index=False)
+    
     print(OUTPUT_TEMPLATE.format(
             score = model.score(X1_test, y1_test) 
         )
