@@ -70,7 +70,7 @@ class OwlData:
             temp["role"] = data["data"][i]["role"]
             temp["name"] = data["data"][i]["name"]
             temp["team"] = data["data"][i]["team"]
-            temp["teamId"] = data["data"][i]["eliminations_avg_per_10m"]
+            temp["eliminations_avg_per_10m"] = data["data"][i]["eliminations_avg_per_10m"]
             temp["deaths_avg_per_10m"]= data["data"][i]["deaths_avg_per_10m"]
             temp["healing_avg_per_10m"] = data["data"][i]["healing_avg_per_10m"]
             temp["ultimates_earned_avg_per_10m"]= data["data"][i]["ultimates_earned_avg_per_10m"]
@@ -194,10 +194,12 @@ def main():
     owl.playerstats_todict()
     owl.playerstats_save_to_file(file2)
 
+    #owl.get_schedule(1,1)
     df = pd.read_csv('owl_data.csv')
     df2 = pd.read_csv('owl_playerstats.csv')
     print(df)
     print(df2)
+
 
 if __name__ == '__main__':
     main()
