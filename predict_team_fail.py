@@ -24,6 +24,7 @@ def main():
     
     X_train, X_valid, y_train, y_valid = train_test_split(X, y)
     
+    
     #testing different diff ml models for the highest score
     knn_model = make_pipeline(
         StandardScaler(),
@@ -51,7 +52,7 @@ def main():
     gb_model.fit(X_train, y_train)
     
     X_unlabelled = data_unlabelled.values
-    predictions = svc_model.predict(X_unlabelled)  
+    predictions = svc_model.predict(X_valid)  
     predictions2 = knn_model.predict(X_unlabelled) 
     predictions3 = rf_model.predict(X_unlabelled)  
     predictions4 = gb_model.predict(X_unlabelled)
