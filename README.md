@@ -17,11 +17,27 @@ Installing Anaconda will allow you to use the following:
 - matplotlib
 
 ### Comands/Arguments
+Use the following command lines on your terminal to run the respective Python scripts:
 
+- create_csv.py
+```
+python3 create_csv.py
 ```
 
+- predict_role.py
+```
+python3 predict_role.py
 ```
 
+- predict_name.py
+```
+python3 predict_name.py
+```
+
+- predict_team.py 
+```
+python3 predict_team.py
+```
 ### Order of Executuion
 
 
